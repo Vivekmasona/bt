@@ -1,15 +1,13 @@
 {
   "name": "device-discovery",
   "version": "1.0.0",
-  "description": "A Node.js application to discover nearby Bluetooth devices and display them on a web page",
+  "description": "A Node.js application to discover nearby devices and display them on a web page",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "author": "Your Name",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
-    "noble": "^1.9.2-15"
+    "bonjour": "^3.5.0"
   }
 }
