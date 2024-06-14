@@ -18,7 +18,7 @@
             deviceList.innerHTML = '';
             devices.forEach(device => {
                 const listItem = document.createElement('li');
-                listItem.textContent = `Name: ${device.name}, UUID: ${device.uuid}`;
+                listItem.textContent = `Name: ${device.name}, Type: ${device.type}, Port: ${device.port}, Address: ${device.address}`;
                 deviceList.appendChild(listItem);
             });
         }
