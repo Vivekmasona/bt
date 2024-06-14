@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Device Discovery</title>
+</head>
+<body>
+    <h1>Nearby Devices</h1>
+    <button onclick="getDevices()">Search Devices</button>
+    <ul id="deviceList"></ul>
+
+    <script>
+        async function getDevices() {
+            const response = await fetch('/devices');
+            const devices = await response.json();
+            const deviceList = document.getElementById('deviceList');
+            deviceList.innerHTML = '';
+            devices.forEach(device => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Name: ${device.name}, UUID: ${device.uuid}`;
+                deviceList.appendChild(listItem);
+            });
+        }
+    </script>
+</body>
+</html>
