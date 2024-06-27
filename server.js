@@ -1,27 +1,32 @@
 const express = require('express');
-const bonjour = require('bonjour')();
+const ytdl = require('ytdl-core');
+const speaker = require('speaker');
+
 const app = express();
-const port = process.env.PORT || 3000;
 
-app.use(express.static('public'));
+app.get('/play', (req, res) => {
+  const url = req.query.url;
 
-let devices = [];
+  ytdl.getInfo(url, (err, info) => {
+    if (err) {
+      res.status(500).send(err.message);
+    } else {
+      const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audio' });
+      const stream = ytdl.downloadFromInfo(info, { filter: 'audio' });
 
-// Discover all available services
-bonjour.find({}, (service) => {
-    const device = {
-        name: service.name,
-        type: service.type,
-        port: service.port,
-        address: service.referer.address
-    };
-    devices.push(device);
+      const speakerStream = new speaker({
+        sampleRate: audioUrl.sample_rate,
+        channels: audioUrl.channels,
+        bitDepth: audioUrl.bit_depth,
+      });
+
+      stream.pipe(speakerStream);
+
+      res.send(`Playing audio from ${url}`);
+    }
+  });
 });
 
-app.get('/devices', (req, res) => {
-    res.json(devices);
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+app.listen(3000, () => {
+  console.log('Server listening on port 3000');
 });
