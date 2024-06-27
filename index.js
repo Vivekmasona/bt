@@ -1,11 +1,14 @@
+
 const express = require('express');
 const ytdl = require('ytdl-core');
-const speaker = require('speaker');
+const fs = require('fs');
+const playAudio = require('play-audio');
 
 const app = express();
 
-app.get('/play', (req, res) => {
+app.get('/download', (req, res) => {
   const url = req.query.url;
+  const filename = `${Date.now()}.mp3`;
 
   ytdl.getInfo(url, (err, info) => {
     if (err) {
@@ -14,19 +17,25 @@ app.get('/play', (req, res) => {
       const audioUrl = ytdl.chooseFormat(info.formats, { filter: 'audio' });
       const stream = ytdl.downloadFromInfo(info, { filter: 'audio' });
 
-      const speakerStream = new speaker({
-        sampleRate: audioUrl.sample_rate,
-        channels: audioUrl.channels,
-        bitDepth: audioUrl.bit_depth,
-      });
+      const writer = fs.createWriteStream(filename);
+      stream.pipe(writer);
 
-      stream.pipe(speakerStream);
-
-      res.send(`Playing audio from ${url}`);
+      res.send(`Audio downloaded to ${filename}`);
     }
+  });
+});
+
+app.get('/play', (req, res) => {
+  const filename = `${Date.now()}.mp3`; // assuming the file is saved with this name
+
+  playAudio(filename).then(() => {
+    res.send('Audio playing');
+  }).catch(err => {
+    res.status(500).send(err.message);
   });
 });
 
 app.listen(3000, () => {
   console.log('Server listening on port 3000');
 });
+
