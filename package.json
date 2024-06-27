@@ -7,6 +7,6 @@
     "speaker": "^5.2.0"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "index.js"
   }
 }
